@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { map, filter, switchMap } from 'rxjs/operators';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
+import { JwtHelperService  } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,9 @@ import { Observable, throwError } from 'rxjs';
 export class AuthService {
   baseUrl = 'https://localhost:44351/api/auth/';
   userToken: any;
+  decodedToken: any;
+  //jwtHelper: JwtHelper = new JwtHelper();
+  helper = new JwtHelperService();
 
 constructor(private http: HttpClient) { }
 
@@ -32,6 +36,7 @@ login(model: any)
     console.log(user);
     if (user)
     {
+      this.decodedToken = this.helper.decodeToken(user.tokenString);
       localStorage.setItem('token', user.tokenString);
       this.userToken = user.tokenString;
     }
@@ -56,6 +61,7 @@ register(model: any) {
 
 
   // handle error
+  // tslint:disable-next-line: typedef
   private handleError(error: any)
   {
     const applicationError = error.headers.get('Application-Error');
@@ -80,6 +86,13 @@ register(model: any) {
     return throwError(
       modelStateErrors || 'Server error'
     );
+  }
+
+// usingjwttoken
+  // tslint:disable-next-line: typedef
+  loggedIn() {
+    const token = localStorage.getItem('token');
+    return token != null && !this.helper.isTokenExpired(token);
   }
 
 

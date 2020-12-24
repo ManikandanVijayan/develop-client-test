@@ -1,36 +1,45 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertifyService } from '../_services/alertify.service';
 import { AuthService } from '../_services/auth.service';
 
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
-  styleUrls: ['./nav.component.scss']
+  styleUrls: ['./nav.component.css']
 })
 export class NavComponent implements OnInit {
   model:any={};
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private alertify: AlertifyService, private router: Router) { }
 
   ngOnInit() {
   }
 
+  // tslint:disable-next-line: typedef
   login() {
     this.authService.login(this.model).subscribe(data => {
-      console.log('Logged in successfully');
+      this.alertify.success('logged in successfully');
     }, error => {
-      console.log('Failed to login');
+      this.alertify.error('Failed to log in');
+    }, () => {
+      this.router.navigate(['/members']);
     });
   }
 
+  // tslint:disable-next-line: typedef
   logout() {
     this.authService.userToken = null;
     localStorage.removeItem('token');
-    console.log('Logged out');
+    this.alertify.message('logged out');
+    this.router.navigate(['/home']);
   }
 
+
+  // tslint:disable-next-line: typedef
   loggedIn() {
-    const token = localStorage.getItem('token');
-    return !!token;
+    return this.authService.loggedIn();
   }
+
 
 }
