@@ -3,8 +3,9 @@ import { Response } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { map, filter, switchMap } from 'rxjs/operators';
 import { catchError } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { JwtHelperService  } from '@auth0/angular-jwt';
+import { User } from '../_models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,15 @@ export class AuthService {
   decodedToken: any;
   //jwtHelper: JwtHelper = new JwtHelper();
   helper = new JwtHelperService();
+  currentUser:User;
+  private photoUrl = new BehaviorSubject<string>('../../assets/user.png');
+  currentPhotoUrl = this.photoUrl.asObservable();
 
 constructor(private http: HttpClient) { }
+
+changeMemberPhoto(photoUrl: string) {
+  this.photoUrl.next(photoUrl);
+}
 
 // tslint:disable-next-line: typedef
 login(model: any)
@@ -38,16 +46,26 @@ login(model: any)
     {
       this.decodedToken = this.helper.decodeToken(user.tokenString);
       localStorage.setItem('token', user.tokenString);
+      localStorage.setItem('user', JSON.stringify(user.user));
       this.userToken = user.tokenString;
+      this.currentUser = user.user;
+      if (this.currentUser.photoUrl !== null) {
+        this.changeMemberPhoto(this.currentUser.photoUrl);
+      } else {
+        this.changeMemberPhoto('../../assets/user.png');
+      }
     }
   })).pipe(catchError(this.handleError));
 
 }
 
 // tslint:disable-next-line: typedef
-register(model: any) {
-    return this.http.post(this.baseUrl + 'register', model, this.requestOptions()).pipe(catchError(this.handleError));
+register(user: User) {
+    return this.http.post(this.baseUrl + 'register', user, this.requestOptions()).pipe(catchError(this.handleError));
   }
+
+
+
 
   // tslint:disable-next-line: typedef
   private requestOptions() {

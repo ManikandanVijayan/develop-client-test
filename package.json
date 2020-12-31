@@ -26,10 +26,13 @@
     "angular-jwt": "^0.1.11",
     "bootstrap": "^3.3.7",
     "bootswatch": "^3.3.7",
+    "ng2-file-upload": "^1.4.0",
     "ngx-bootstrap": "^6.2.0",
     "ngx-gallery": "^5.10.0",
     "rxjs": "~6.6.0",
+    "time-ago-pipe": "^1.3.2",
     "tslib": "^2.0.0",
+    "underscore": "^1.12.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
@@ -40,6 +43,7 @@
     "@types/angular-jwt": "0.0.29",
     "@types/jasmine": "~3.6.0",
     "@types/node": "^12.11.1",
+    "@types/underscore": "^1.10.24",
     "codelyzer": "^6.0.0",
     "font-awesome": "^4.7.0",
     "jasmine-core": "~3.6.0",
